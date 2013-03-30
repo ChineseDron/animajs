@@ -37,7 +37,7 @@
 
 	<!-- Scripts
 	================================================== -->
-	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+	<!--<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>-->
 
 </head>
 <body>
@@ -80,7 +80,10 @@
 
 <script>
 	_(".asdSlider-next").sel()[0].onclick = function () {
-		_("#hola").animate({tiena : "hola",dime : "comoestas"},300);
+		_("#hola").animate({
+			top : '200px',
+			left : '300px'
+		},2000);
 	}
 	
 </script>
