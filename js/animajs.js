@@ -34,6 +34,7 @@ _.prototype = {
 			if( this.el[0].style[prefixTemp] !== undefined ) {
 				this.prfix = prefixList[n];
 				this.prfixKey = '@-' + this.prfix.toLowerCase() + '-keyframes ';
+				return true;
 			}
 		}
 
@@ -58,6 +59,7 @@ _.prototype = {
 		for( var n = 0 ;n < this.el.length ; n ++ ) {
 			//console.log( this.self.cssToStr(obj) );
 			//console.log(this.el[n].getAttribute("id"));
+			self = this.el[n];
 
 			this.el[n].style[this.prfix + 'Animation'] = 
 				"nextMove " + speed + "ms" +
@@ -70,6 +72,16 @@ _.prototype = {
 			addStyle.innerHTML = keyframes;
 			document.getElementsByTagName( 'head' )[ 0 ].appendChild( addStyle );
 			
+			this.el[n].addEventListener( 
+     			'webkitAnimationEnd', 
+     			
+     			function( event ) { 
+     				self.style.WebkitAnimation = '';
+         			document.getElementsByTagName( 'head' )[ 0 ].removeChild( addStyle );
+         			//alert( "Finished transition!" ); 
+     			}, false 
+     		);
+					
 		}
 
 	},

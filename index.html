@@ -65,6 +65,7 @@
 			</ul>
 
 			<a id = "asd" href = "#"   class = "asdSlider-next">Next</a>
+			<a id = "dsa" href = "#"   class = "asdSlider-prev">Previus</a>
 
 		</div>	
 	</div>
@@ -81,9 +82,17 @@
 <script>
 	_(".asdSlider-next").sel()[0].onclick = function () {
 		_("#hola").animate({
-			top : '200px',
-			left : '300px'
+			top : '400px',
+			left : '50px',
+			
 		},2000);
+	}
+	_(".asdSlider-prev").sel()[0].onclick = function () {
+		_("#hola").animate({
+			top : '50px',
+			left : '0px',
+			
+		},1000);
 	}
 	
 </script>
