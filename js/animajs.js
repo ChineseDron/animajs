@@ -1,8 +1,10 @@
+var animaHeadTag = document.getElementsByTagName( 'head' )[0];
+
 //(function() {
 function _(el) {
 
 	this.self = this;
-
+	this.animationEnd = '';
 	if (window === this) {
     	return new _(el);
 	}
@@ -15,7 +17,6 @@ function _(el) {
 
 	this.browserPrefix();
 
-	
 	return this;
 }
 
@@ -23,7 +24,7 @@ _.prototype = {
 	
 	//@return Browser Prefix
 	browserPrefix : function () {
-	
+		
 		var prefixList = ["Moz" , "Webkit", "O"];
 
 		for( var n = 0 ;n < prefixList.length; n ++ ) {
@@ -32,15 +33,31 @@ _.prototype = {
 			if( this.el[0].style[prefixTemp] !== undefined ) {
 				this.prfix = prefixList[n];
 				this.prfixKey = '@-' + this.prfix.toLowerCase() + '-keyframes ';
-				return true;
+				break;
 			}
+		}
+
+		switch (this.prfix) {
+			case "Moz" :
+				this.animationEnd = "transitionend";
+			break;
+
+			case "Webkit" :
+
+				this.animationEnd = "webkitAnimationEnd";
+			break;
+
+			case "O" :
+				this.animationEnd = "transitionend";
+			break;
 		}
 
 	},
 
 	//@void Update the css after the animation
 	updateCss : function (el,obj) {
-		el.style.cssText = this.cssToStr(obj,true);
+		var temp = el.style.cssText;
+		el.style.cssText = temp + obj;
 	},
 
 	//@ return just the element selector
@@ -63,64 +80,83 @@ _.prototype = {
 
 	},
 
-	//This function decided how we should end the trans/anim, deleting his keyframes or styles
-	transitionEnd : function (el, addStyle, style) {
-		var self = this.self;
-		var animationEnd = '';
-
-		switch (this.prfix) {
-			case "Moz" :
-				animationEnd = "transitionend";
-			break;
-
-			case "Webkit" :
-				animationEnd = "webkitAnimationEnd";
-			break;
-
-			case "O" :
-				animationEnd = "transitionend";
-			break;
+	//@void Prevent the bubble effect
+	stopp : function () {
+		var newStyles = '';
+		//console.log(this.styles);
+		//Edited cssToStr Method. Who get the actual position and transform it in css string
+	
+		var getStyles = window.getComputedStyle(this.el[0]); 
+		
+		
+		for(var key in this.styles) {
+			newStyles += key + ':' + getStyles.getPropertyCSSValue(key).cssText + ';';
 		}
+		console.log(this.addStyle);
+		
+		if( this.addStyle !== undefined ) {
+			animaHeadTag.removeChild( this.addStyle );
+			this.addStyle = undefined;
+		}
+		this.el[0].style[this.prfix + "Animation"] = '';
+		
+		this.updateCss(this.el[0], newStyles);
 
+		//console.log(newStyles);
+		
+		return this.self;
+		
+	},
+
+	//This function decided how we should end the trans/anim, deleting his keyframes or styles
+	transitionEnd : function (el, addStyle, styles) {
+		var self = this.self;
+		
 		el.addEventListener( 
      			
- 			animationEnd, 
+ 			self.animationEnd, 
  			
  			function( event ) { 
+ 				console.log(self.addStyle);
+  				//if( self.addStyle !== undefined ) animaHeadTag.removeChild( self.addStyle );
+ 				if( self.addStyle !== undefined ) {
+					animaHeadTag.removeChild( self.addStyle );
+					self.addStyle = undefined;
+				}
  				this.style[self.prfix + 'Animation'] = '';
-     			document.getElementsByTagName( 'head' )[ 0 ].removeChild( addStyle );
-     			//alert( "Finished transition!" ); 
- 				self.updateCss(this,style);
+ 				
+ 				self.updateCss( this,self.cssToStr( styles,true ) );				
+ 				
  			}, false 
 
      	);
 	},
 
 	//@void - Prepare everything to do the animation part, This should work like jQuery Animations
-	animate : function (style,speed) {
-		//this.self.cssToStr();
+	animate : function (styles,speed) {
+		this.styles = styles;
+		//console.log("hola");
 		for( var n = 0 ;n < this.el.length ; n ++ ) {
-		
-			self = this.self;
-
+			//this.element = this.el[n];
+			
+			var keyframes  = this.prfixKey + 'nextMove {' +
+							 'to {' + this.cssToStr(styles) + '} }' ;
+			
+			this.addStyle = document.createElement("style");
+			this.addStyle.innerHTML = keyframes;
+			animaHeadTag.appendChild(this.addStyle );
+			
 			this.el[n].style[this.prfix + 'Animation'] = 
 				"nextMove " + speed + "ms" +
 				" ease-in-out 0s 1 normal forwards";
-			
-			var keyframes  = this.prfixKey + 'nextMove {' +
-							 'to {' + this.cssToStr(style) + '} }' ;
-			
-			var addStyle = document.createElement("style");
-			addStyle.innerHTML = keyframes;
-			document.getElementsByTagName( 'head' )[ 0 ].appendChild( addStyle );
-			
-			this.transitionEnd( this.el[n],addStyle,style );
-							
+
+			this.transitionEnd( this.el[n],this.addStyle,this.styles );
+			return this.self;
 		}
 
 	},
 
-
+	
 }
 
 //Private Methods	
