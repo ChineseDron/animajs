@@ -40,3 +40,12 @@
    
    to { left: 300px; }
 } */
+
+.box {
+	position:absolute;
+	top:10%;
+	left:20%;
+	height:50px;
+	width:50px;
+	border:1px solid red;
+}

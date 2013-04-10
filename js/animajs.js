@@ -39,7 +39,7 @@ _.prototype = {
 
 		switch (this.prfix) {
 			case "Moz" :
-				this.animationEnd = "transitionend";
+				this.animationEnd = "animationend";
 			break;
 
 			case "Webkit" :
@@ -57,6 +57,7 @@ _.prototype = {
 	//@void Update the css after the animation
 	updateCss : function (el,obj) {
 		var temp = el.style.cssText;
+		console.log(temp);
 		el.style.cssText = temp + obj;
 	},
 
@@ -82,29 +83,31 @@ _.prototype = {
 
 	//@void Prevent the bubble effect
 	stopp : function () {
+		if( this.addStyle === undefined ) return this; 
 		var newStyles = '';
 		//console.log(this.styles);
 		//Edited cssToStr Method. Who get the actual position and transform it in css string
 	
-		var getStyles = window.getComputedStyle(this.el[0]); 
+		var getStyles = window.getComputedStyle(this.el[0],null); 
 		
 		
 		for(var key in this.styles) {
-			newStyles += key + ':' + getStyles.getPropertyCSSValue(key).cssText + ';';
+			newStyles += key + ':' + getStyles.getPropertyValue(key) + ';';
 		}
-		console.log(this.addStyle);
-		
-		if( this.addStyle !== undefined ) {
-			animaHeadTag.removeChild( this.addStyle );
-			this.addStyle = undefined;
-		}
-		this.el[0].style[this.prfix + "Animation"] = '';
+		//console.log(this.addStyle);
 		
 		this.updateCss(this.el[0], newStyles);
 
-		//console.log(newStyles);
+		animaHeadTag.removeChild( this.addStyle );
+	
+		this.el[0].style[this.prfix + "Animation"] = '';
 		
-		return this.self;
+		
+
+		//console.log(newStyles);
+		this.addStyle = undefined;
+
+		return this;
 		
 	},
 
@@ -117,7 +120,7 @@ _.prototype = {
  			self.animationEnd, 
  			
  			function( event ) { 
- 				console.log(self.addStyle);
+
   				//if( self.addStyle !== undefined ) animaHeadTag.removeChild( self.addStyle );
  				if( self.addStyle !== undefined ) {
 					animaHeadTag.removeChild( self.addStyle );
@@ -127,7 +130,7 @@ _.prototype = {
  				
  				self.updateCss( this,self.cssToStr( styles,true ) );				
  				
- 			}, false 
+ 			}, true 
 
      	);
 	},
@@ -148,7 +151,7 @@ _.prototype = {
 			
 			this.el[n].style[this.prfix + 'Animation'] = 
 				"nextMove " + speed + "ms" +
-				" ease-in-out 0s 1 normal forwards";
+				" linear 0s 1 normal forwards";
 
 			this.transitionEnd( this.el[n],this.addStyle,this.styles );
 			return this.self;

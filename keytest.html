@@ -52,26 +52,14 @@
 		<h1 id = "ache" class="remove-bottom" style="margin-top: 40px">AsdSlider</h1>
 		<h5>Version 0.1 Beta</h5>
 		<a id = "asd" href = "#"   class = "asdSlider-next">Next</a>
-		<a id = "dsa" href = "#"   class = "asdSlider-prev">Previus</a>
-		<a id = "fgh" href = "#"   class = "asdSlider-end">Previus</a>
 		<hr />
 	</div>
 	<br class = "clearfix" />
 
-	<div class = "sixteen columns">
-		<div class = "asdSliderWrapper">
-			
-			<ul  class = "asdSlider">
-				
-				<li id = "hola"><img src = "img/walle.jpg" /></li>
-			
-			</ul>
-
-			
-
-		</div>	
+	<div  style = "position:relative;border:1px solid black; height:400px" class = "fifteen columns">
+		<div class = "box"></div>
 	</div>
-
+	<hr />
 </div><!-- container -->
 
 
@@ -82,12 +70,32 @@
 <script type="text/javascript" src="js/animajs.js"></script>
 
 <script>
-	var anima = _("#hola");
-	_(".asdSlider-next").sel()[0].onclick = function () {
-		anima.animate({
-			'top' : '200px',
-		},4000);
+	var anima = _(".box");
+	
+	window.onkeydown = function(e) {
+		if (e.keyCode === 68) { //D
+			
+			anima.stopp().animate({
+				'left' : '100%', //100%
+			},4000);
+
+		} else if (e.keyCode === 83) { //S 
+			anima.stopp().animate({
+				'top' : '100%',
+			},2000);
+		
+		} else if (e.keyCode === 87) { //W
+			anima.stopp().animate({
+				'top' : '0%',
+			},2000);	
+
+		} else if (e.keyCode === 65) { //A
+			anima.stopp().animate({
+				'left' : '0%',
+			},4000);
+		}	
 	}
+
 	
 </script>
 
